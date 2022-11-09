@@ -16,8 +16,16 @@ async function run() {
     try {
         const courseCollection = client.db('programmingSage').collection('courses');
 
-        // get Data from mongoDb
+        // get limited Data from mongoDb
         app.get('/courses', async (req, res) => {
+            const query = {};
+            const cursor = courseCollection.find(query).limit(3);
+            const courses = await cursor.toArray();
+            res.send(courses);
+        });
+
+        // get All data from mongodb
+        app.get('/coursesAll', async (req, res) => {
             const query = {};
             const cursor = courseCollection.find(query);
             const courses = await cursor.toArray();
