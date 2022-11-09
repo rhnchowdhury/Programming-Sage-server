@@ -11,12 +11,24 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ajoxj5t.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-    const collection = client.db("test").collection("devices");
-    // perform actions on the collection object
-    client.close();
-});
 
+async function run() {
+    try {
+        const courseCollection = client.db('programmingSage').collection('courses');
+
+        // get Data from mongoDb
+        app.get('/courses', async (req, res) => {
+            const query = {};
+            const cursor = courseCollection.find(query);
+            const courses = await cursor.toArray();
+            res.send(courses);
+        })
+    }
+    finally {
+
+    }
+}
+run().catch(err => console.error(err));
 
 app.get('/', (req, res) => {
     res.send('programming sage running')
