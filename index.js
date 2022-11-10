@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { query } = require('express');
 const app = express();
@@ -67,6 +68,27 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
+        });
+
+        // Update reviews
+        // app.patch('/reviews/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const status = req.body.status;
+        //     const query = { _id: ObjectId(id) };
+        //     const updateDoc = {
+        //         $set: {
+        //             status: status
+        //         }
+        //     }
+        //     const result = await reviewCollection.updateOne(query, updateDoc);
+        //     res.send(result);
+        // })
+
+        // jwt created
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            res.send({ token });
         })
     }
     finally {
