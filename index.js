@@ -18,6 +18,7 @@ async function run() {
     try {
         const courseCollection = client.db('programmingSage').collection('courses');
         const reviewCollection = client.db('programmingSage').collection('reviews');
+        const addCollection = client.db('programmingSage').collection('added');
 
         // get limited Data from mongoDb
         app.get('/courses', async (req, res) => {
@@ -70,19 +71,25 @@ async function run() {
             res.send(result);
         });
 
-        // Update reviews
-        // app.patch('/reviews/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const status = req.body.status;
-        //     const query = { _id: ObjectId(id) };
-        //     const updateDoc = {
-        //         $set: {
-        //             status: status
-        //         }
-        //     }
-        //     const result = await reviewCollection.updateOne(query, updateDoc);
-        //     res.send(result);
-        // })
+        // crete added API
+        app.post('/add', async (req, res) => {
+            const add = req.body;
+            const result = await addCollection.insertOne(add);
+            res.send(result);
+        });
+
+        // get added API
+        app.get('/add', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = addCollection.find(query);
+            const added = await cursor.toArray();
+            res.send(added);
+        })
 
         // jwt created
         app.post('/jwt', (req, res) => {
@@ -91,6 +98,7 @@ async function run() {
             res.send({ token });
         })
     }
+
     finally {
 
     }
